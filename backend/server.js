@@ -62,6 +62,7 @@ async function streamString(res, text, delayMs = 20) {
     "Content-Type": "text/event-stream",
     "Cache-Control": "no-cache",
     Connection: "keep-alive",
+    "X-Accel-Buffering": "no",
   });
 
   for (let i = 0; i < text.length; i++) {
@@ -129,7 +130,20 @@ Be honest, respectful, and kind. Offer reassurance to users who are feeling unsa
       }),
     });
 
-    if (!ollamaResponse.ok || !ollamaResponse.body) {
+    if (!ollamaResponse.ok) {
+      let errorMsg = "Failed to get response from Ollama";
+      try {
+        const errBody = await ollamaResponse.json();
+        if (errBody.error) errorMsg = errBody.error;
+      } catch {}
+      if (errorMsg.toLowerCase().includes("image")) {
+        return res.status(400).json({
+          reply: "This chatbot only supports text input. Please send a text message instead of an image.",
+        });
+      }
+      throw new Error(errorMsg);
+    }
+    if (!ollamaResponse.body) {
       throw new Error("Failed to get response from Ollama");
     }
 
@@ -137,6 +151,7 @@ Be honest, respectful, and kind. Offer reassurance to users who are feeling unsa
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
       Connection: "keep-alive",
+      "X-Accel-Buffering": "no",
     });
 
     const decoder = new TextDecoder("utf-8");
