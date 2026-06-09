@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: vanta-ai-backend
+    runtime: node
+    repo: https://github.com/tp-shivha-shakthiy/VantaAI
+    branch: main
+    buildCommand: npm install
+    startCommand: node backend/server.js
+    envVars:
+      - key: NODE_VERSION
+        value: 18

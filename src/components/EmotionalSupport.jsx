@@ -113,7 +113,8 @@ function EmotionalSupport() {
 
     try {
       // This fetch logic remains the same
-      const res = await fetch("http://localhost:5000/api/chat", {
+      const CHAT_API_URL = import.meta.env.VITE_CHAT_API_URL || "http://localhost:5000/api/chat";
+      const res = await fetch(CHAT_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
