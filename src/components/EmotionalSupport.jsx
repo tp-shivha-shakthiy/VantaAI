@@ -112,7 +112,7 @@ function EmotionalSupport() {
     if (showSuggestions) setShowSuggestions(false);
 
     try {
-      const CHAT_API_URL = import.meta.env.VITE_CHAT_API_URL || "http://localhost:5000/api/chat";
+      const CHAT_API_URL = import.meta.env.VITE_CHAT_API_URL || "https://vantaai-production.up.railway.app/api/chat";
       const res = await fetch(CHAT_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
