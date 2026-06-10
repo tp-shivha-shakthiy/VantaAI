@@ -36,6 +36,10 @@ const hardcodedReplies = {
   "who made you": "I was created during a digital safety hackathon to help users stay safe online.",
   "can you track me": "No, I cannot track or monitor anything you do.",
   "is my data safe": "Yes. Vanta AI processes everything locally and does not share or store your data.",
+  "image": "I can only read and respond to text messages. Please send your question as text and I'll be happy to help!",
+  "image.png": "I only support text — please send your question as text instead of an image.",
+  "cannot read image": "I'm a text-only chatbot and can't process images. Just type your question and I'll help you out!",
+  "model does not support image input": "I'm a text-only chatbot and can't process images. Just type your question and I'll help you out!",
 };
 
 // 🔍 Fuzzy matching
@@ -95,6 +99,15 @@ app.post("/api/chat", async (req, res) => {
     console.log(`✅ Hardcoded reply for: "${lastUserMsg}"`);
     await streamString(res, hardcoded);
     return;
+  }
+
+  // Filter out messages with image content before sending to Ollama
+  for (const msg of messages) {
+    if (typeof msg.content === "object" || (typeof msg.content === "string" && msg.content.length > 2000 && msg.content.includes("base64"))) {
+      return res.status(400).json({
+        reply: "I only support text messages — please send text instead of an image.",
+      });
+    }
   }
 
   if (!IS_OLLAMA_ENABLED) {
