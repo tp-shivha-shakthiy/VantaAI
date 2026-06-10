@@ -82,13 +82,26 @@ app.get("/", (req, res) => {
 
 // 🔄 Chat endpoint
 app.post("/api/chat", async (req, res) => {
-    if (!IS_OLLAMA_ENABLED) {
-    return res.status(503).json({
-      reply: "I'm running in deployed mode without an AI model. For full AI responses, run the backend locally with Ollama (`OLLAMA_MODE=local`). Try one of the suggested topics above!",
-    });
+  const messages = req.body.messages || [];
+  const lastUserMsg = messages.slice().reverse().find(m => m.role === "user")?.content;
+
+  if (!lastUserMsg) {
+    return res.status(400).json({ reply: "Please provide a valid message." });
   }
 
-  const messages = req.body.messages || [];
+  // Hardcoded Q&A works even without Ollama
+  const hardcoded = getFuzzyMatchReply(lastUserMsg);
+  if (hardcoded) {
+    console.log(`✅ Hardcoded reply for: "${lastUserMsg}"`);
+    await streamString(res, hardcoded);
+    return;
+  }
+
+  if (!IS_OLLAMA_ENABLED) {
+    return res.status(503).json({
+      reply: "I'm running in deployed mode without an AI model. For full AI responses, run the backend locally with Ollama.",
+    });
+  }
 
   const systemPrompt = `
 You are Vanta AI — a warm, trauma-informed AI assistant created by a hackathon team. 
@@ -102,19 +115,6 @@ Your role is to:
 
 Be honest, respectful, and kind. Offer reassurance to users who are feeling unsafe or overwhelmed. Help them feel supported, not judged.
   `.trim();
-
-  const lastUserMsg = messages.slice().reverse().find(m => m.role === "user")?.content;
-
-  if (!lastUserMsg) {
-    return res.status(400).json({ reply: "Please provide a valid message." });
-  }
-
-  const hardcoded = getFuzzyMatchReply(lastUserMsg);
-  if (hardcoded) {
-    console.log(`✅ Hardcoded reply for: "${lastUserMsg}"`);
-    await streamString(res, hardcoded);
-    return;
-  }
 
   try {
     const finalMessages = [
