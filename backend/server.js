@@ -83,8 +83,8 @@ app.get("/", (req, res) => {
 // 🔄 Chat endpoint
 app.post("/api/chat", async (req, res) => {
     if (!IS_OLLAMA_ENABLED) {
-    return res.status(501).json({
-      error: "LLM is not available in deployed version. Please run locally with Ollama.",
+    return res.status(503).json({
+      reply: "I'm running in deployed mode without an AI model. For full AI responses, run the backend locally with Ollama (`OLLAMA_MODE=local`). Try one of the suggested topics above!",
     });
   }
 
@@ -140,7 +140,7 @@ Be honest, respectful, and kind. Offer reassurance to users who are feeling unsa
       } catch {}
       if (errorMsg.toLowerCase().includes("image")) {
         return res.status(400).json({
-          reply: "This chatbot only supports text input. Please send a text message instead of an image.",
+          reply: "I only support text messages — please send text instead of an image.",
         });
       }
       throw new Error(errorMsg);

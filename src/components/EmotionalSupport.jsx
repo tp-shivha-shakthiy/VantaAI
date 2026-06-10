@@ -112,7 +112,6 @@ function EmotionalSupport() {
     if (showSuggestions) setShowSuggestions(false);
 
     try {
-      // This fetch logic remains the same
       const CHAT_API_URL = import.meta.env.VITE_CHAT_API_URL || "http://localhost:5000/api/chat";
       const res = await fetch(CHAT_API_URL, {
         method: "POST",
@@ -121,6 +120,15 @@ function EmotionalSupport() {
           messages: updatedMessages.map(msg => ({ role: msg.role, content: msg.content })),
         }),
       });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: errData.reply || errData.error || "Sorry, I'm not available right now." },
+        ]);
+        return;
+      }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder("utf-8");
