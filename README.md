@@ -4,6 +4,11 @@
 
 ### **Live Demo:** [vanta-ai-eight.vercel.app](https://vanta-ai-eight.vercel.app)
 
+> **Deployment behavior:**
+> - **Deployed backend (Railway):** Only hardcoded Q&A replies work (greetings, "what is vanta ai", etc.). Full AI responses require the local Ollama backend.
+> - **Local backend:** Run with `OLLAMA_MODE=local` to enable Phi-3 via Ollama for full AI-powered conversations.
+> - **Frontend (Vercel):** Connects to Railway by default. For local development, set `VITE_CHAT_API_URL=http://localhost:5000/api/chat` in `.env`.
+
 ---
 
 ## The Problem
