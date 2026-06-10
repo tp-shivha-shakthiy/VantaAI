@@ -2,7 +2,7 @@
 
 **VantaAI is a comprehensive web application designed to combat the rising threat of image-based abuse, including revenge porn, deepfakes, and the non-consensual sharing of personal images. Our platform empowers users with the tools to proactively protect, detect, and report the misuse of their images across the web.**
 
-### **Live Demo:** [vanta-ai-eight.vercel.app](https://vanta-ai-eight.vercel.app)
+### **Live Demo:** [vanta-ai-eight.vercel.app](https://vanta-ai-eight-eight.vercel.app)
 
 > **Deployment behavior:**
 > - **Deployed backend (Railway):** Only hardcoded Q&A replies work (greetings, "what is vanta ai", etc.). Full AI responses require the local Ollama backend.
