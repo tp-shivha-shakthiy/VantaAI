@@ -7,6 +7,8 @@ import stringSimilarity from "string-similarity";
 dotenv.config();
 const IS_OLLAMA_ENABLED = process.env.OLLAMA_MODE === "local";
 
+class OllamaImageError extends Error {}
+
 
 const app = express();
 app.use(cors());
@@ -169,6 +171,14 @@ Be honest, respectful, and kind. Offer reassurance to users who are feeling unsa
           try {
             const parsed = JSON.parse(line);
 
+            if (parsed.error) {
+              const errMsg = parsed.error;
+              if (errMsg.toLowerCase().includes("image")) {
+                throw new OllamaImageError("This chatbot only supports text input.");
+              }
+              throw new Error(errMsg);
+            }
+
             // ✅ Output cleaned AI content
             if (parsed.message?.content) {
               const cleaned = sanitizeAIText(parsed.message.content);
@@ -180,7 +190,14 @@ Be honest, respectful, and kind. Offer reassurance to users who are feeling unsa
               res.end();
               return;
             }
-          } catch {
+          } catch (err) {
+            if (err instanceof OllamaImageError) {
+              if (!res.writableEnded) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ reply: err.message }));
+              }
+              return;
+            }
             // Ignore malformed lines
           }
         }
