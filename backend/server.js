@@ -36,12 +36,20 @@ const hardcodedReplies = {
   "who made you": "I was created during a digital safety hackathon to help users stay safe online.",
   "can you track me": "No, I cannot track or monitor anything you do.",
   "is my data safe": "Yes. Vanta AI processes everything locally and does not share or store your data.",
-  "image": "I can only read and respond to text messages. Please send your question as text and I'll be happy to help!",
-  "image.png": "I only support text — please send your question as text instead of an image.",
-  "cannot read image": "I'm a text-only chatbot and can't process images. Just type your question and I'll help you out!",
-  "model does not support image input": "I'm a text-only chatbot and can't process images. Just type your question and I'll help you out!",
-};
+  
+  // 🆕 Extracted Questions from Image 1
+  "how do i know if my personal data is being misused": "Signs of misuse include unfamiliar account activities, unexpected login alerts, or receiving suspicious phishing emails. You can check breach registries like 'Have I Been Pwned' to see if your data has leaked.",
+  "can someone post my pictures without asking me": "No, posting your photos without permission violates your right to privacy and most platform terms of service. If someone does this, you have the right to request a takedown directly through the platform.",
+  "what should i do if someone threatens me online": "Document everything by taking screenshots, secure your privacy settings, and block the user. If you feel you are in immediate danger, please reach out to local law enforcement or a digital safety advocate right away.",
 
+  // 🆕 Extracted Questions from Image 2 (Legal Rights)
+  "do i have the right to ask for content takedown": "Absolutely. Most modern websites and social networks are legally required to provide tools to report and request the removal of non-consensual images or abusive content.",
+  "can i take action if my pictures are used without consent": "Yes, you can report the posts immediately using the platform's reporting forms. Depending on your jurisdiction, civil privacy laws or copyright mechanisms (like DMCA) can be used to legally enforce a takedown.",
+
+  // 🆕 Extracted Questions from Image 2 (Mental Health & Support)
+  "i feel overwhelmed what can i do right now": "Please take a deep breath; your feelings are completely valid and it is okay to feel overwhelmed right now. Try stepping away from the screen, and remember that you can lean on trusted friends or contact a support helpline whenever you are ready.",
+  "im scared to speak up what are my options": "It is completely normal to feel scared, and you do not have to do anything before you feel ready. You can look into anonymous reporting options, consult confidential advocacy helplines, or talk to someone you trust deeply without making anything public."
+};
 // 🔍 Fuzzy matching
 function getFuzzyMatchReply(userInput) {
   const normalizedInput = userInput.toLowerCase().replace(/[^\w\s]/gi, "");
