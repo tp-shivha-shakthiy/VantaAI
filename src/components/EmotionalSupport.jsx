@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Sparkles, Shield, Scale, HandHeart, RefreshCcw } from 'lucide-react';
+import { Send, Sparkles, Shield, Scale, HandHeart, RefreshCcw } from "lucide-react";
 
 const ChatWindow = ({ messages, isTyping, messagesEndRef }) => (
   <div style={styles.chatWindow}>
@@ -123,10 +123,8 @@ function EmotionalSupport() {
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: errData.reply || errData.error || "Sorry, I'm not available right now." },
-        ]);
+        const msg = errData.reply || errData.error || "I'm not available right now. Please try again later.";
+        setMessages((prev) => [...prev, { role: "assistant", content: msg }]);
         return;
       }
 
