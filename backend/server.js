@@ -176,9 +176,11 @@ Be honest, respectful, and kind. Offer reassurance to users who are feeling unsa
       Connection: "keep-alive",
       "X-Accel-Buffering": "no",
     });
-
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
     const decoder = new TextDecoder("utf-8");
     let buffer = "";
+    let fullResponse = "";
 
     for await (const chunk of ollamaResponse.body) {
       buffer += decoder.decode(chunk, { stream: true });
@@ -200,15 +202,15 @@ Be honest, respectful, and kind. Offer reassurance to users who are feeling unsa
               throw new Error(errMsg);
             }
 
-            // ✅ Output cleaned AI content
+            // Accumulate content instead of streaming per chunk
             if (parsed.message?.content) {
-              const cleaned = sanitizeAIText(parsed.message.content);
-              res.write(`data: ${JSON.stringify({ token: cleaned })}\n\n`);
+              fullResponse += parsed.message.content;
             }
 
             if (parsed.done) {
-              res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
-              res.end();
+              // Once done, sanitize the complete response and stream it token‑by‑token
+              const cleaned = sanitizeAIText(fullResponse);
+              await streamString(res, cleaned);
               return;
             }
           } catch (err) {
@@ -225,8 +227,9 @@ Be honest, respectful, and kind. Offer reassurance to users who are feeling unsa
       }
     }
 
-    res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
-    res.end();
+    // Fallback in case the stream ends without a done flag
+    const cleaned = sanitizeAIText(fullResponse);
+    await streamString(res, cleaned);
   } catch (err) {
     console.error("❌ AI Response Error:", err.message);
     if (!res.writableEnded) {
